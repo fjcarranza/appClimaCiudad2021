@@ -138,7 +138,7 @@ module.exports={
     inquirerMenu,
     pausa,
     leerInput,
-    listadorCiudades
-   // confirmar,
+    listadorCiudades,
+    confirmar
    // tareasCompletar
 }

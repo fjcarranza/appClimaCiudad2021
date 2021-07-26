@@ -1,7 +1,7 @@
 
 require('dotenv').config()
 //const { clear } = require('console');
-const {inquirerMenu, leerInput, pausa, listadorCiudades}=require('./helpers/inquirer');
+const {inquirerMenu, leerInput, pausa, listadorCiudades, confirmar}=require('./helpers/inquirer');
 const Busquedas = require('./model/busquedas');
 
 
@@ -16,8 +16,13 @@ const main = async()=>{
                 const busqueda=await leerInput("Ciudad: ");
                 const ciudades=await busquedas.ciudad(busqueda);
                 const id=await listadorCiudades(ciudades);
+                if(id==='0'){
+                    continue
+                }
                 const lugSelec= ciudades.find(l=>l.id===id);
                 const climaCiudad= await busquedas.climaActual(lugSelec.lat, lugSelec.lng);
+                busquedas.agregarHistorial(lugSelec.nombre);
+                busquedas.guardarDB();
                 console.clear();
                 console.log('________________________________________________________\n'.green);
                 console.log(`            Informacion de ${busqueda}  `.white);
@@ -32,11 +37,16 @@ const main = async()=>{
                 
                 break;
             case 2:
-            
-                break;    
-            
+                busquedas.listaHistorialCap();
+                break;
+            case 3:
+                console.clear();
+                const conf=await confirmar("Quiere cerrar la Aplicación?");
+                if (conf != true) opt=5;
+                break;        
         }
-        await pausa();
+        
+        if(opt !== 3 & opt !== 5) await pausa();
     } while (opt !== 3);
     
     
